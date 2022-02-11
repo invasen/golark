@@ -1,65 +1,32 @@
-const express = require("express");
-const expressHandlebars = require("express-handlebars");
-const app = express();
-const fortune = require("./lib/fortune");
-const handlers = require("./lib/handlers");
-const path = require("path");
+const express = require('express')
+const expressHandlebars = require('express-handlebars')
 
-app.engine(
-	"hbs",
-	expressHandlebars({
-		defaultLayout: "main",
-		extname: ".hbs",
-	})
-);
+const handlers = require('./lib/handlers')
+const weatherMiddlware = require('./lib/middleware/weather')
 
-app.set("view engine", "hbs");
+const app = express()
 
-const port = process.env.PORT || 3333;
+// configure Handlebars view engine
+app.engine('hbs', expressHandlebars({
+  defaultLayout: 'main',
+  extname: '.hbs',
+  helpers: {
+    section: function(name, options) {
+      if(!this._sections) this._sections = {}
+      this._sections[name] = options.fn(this)
+      return null
+    },
+  },
+}))
+app.set('view engine', 'hbs')
 
-app.use(express.static(path.resolve("public")));
+const port = process.env.PORT || 3333
 
-// app.get("/", (req, res) => {
-// 	res.render("home");
-// });
+app.use(express.static(__dirname + '/public'))
 
-app.get("/", handlers.home);
+app.get('/', (req, res) => res.render('home'))
 
-// app.get("/about", (req, res) => {
-// 	res.render("about", { fortune: fortune.getFortune() });
-// });
-
-app.get("/about", handlers.about);
-
-// app.use((req, res) => {
-// 	res.type("text/plain");
-// 	res.status(404);
-// 	res.render("404");
-// });
-
-app.get("/headers", (req, res) => {
-	res.type("text/plain");
-	const headers = Object.entries(req.headers).map(
-		([key, value]) => `${key}: ${value}`
-	);
-	res.send(headers.join("\n"));
-});
-
-app.use(handlers.notFound);
-
-// app.use((err, req, res, next) => {
-// 	console.error(err.message);
-// 	res.type("text/plain");
-// 	res.status(500);
-// 	res.render("500");
-// });
-
-app.use(handlers.serverError);
-
-app.listen(port, () =>
-	console.log(
-		`Express started in ` +
-			`${app.get("env")} mode at http://localhost:${port}` +
-			`; press Ctrl-C to terminate.`
-	)
-);
+app.listen(port, () => {
+  console.log( `Express started on http://localhost:${port}` +
+    '; press Ctrl-C to terminate.' )
+})

@@ -1,20 +1,12 @@
 <!doctype html>
 <html>
   <head>
-    <title>Meadowlark Travel</title>
+    <title>Meadowlark Travel (.hbs views)</title>
+    {{{_sections.head}}}
   </head>
   <body>
-  	<div class="container">
-				<header>
-						<div class="container">
-								<h1>Meadowlark Travel</h1>
-								<img src="/img/logo.png" alt="Meadowlark Travel Logo">
-						</div>
-				</header>
-				<div class="container">
-						{{{body}}}
-				</div>
-				<footer>&copy; 2019 Meadowlark Travel</footer>
-		</div>
+    <p><i>Technical note: using .hbs extension for views.</i></p>
+    {{{body}}}
+    {{{_sections.scripts}}}
   </body>
 </html>
